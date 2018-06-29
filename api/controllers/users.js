@@ -29,7 +29,8 @@ exports.users_user_signup = (req, res, next) => {
           message: 'Email already exists'
         });
       } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => { // 10 - salt
+        // bcrypt.hash(data, salt, cb)
+        bcrypt.hash(req.body.password, 10, (err, hash) => { // 10 - generate salt
           if (err) {
             return res.status(500).json({
               error: err
@@ -38,7 +39,7 @@ exports.users_user_signup = (req, res, next) => {
             const user = new User({
               _id: new mongoose.Types.ObjectId(),
               email: req.body.email,
-              password: hash
+              password: hash // hash - is encrypted password
             });
             user
               .save()
