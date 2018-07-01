@@ -13,5 +13,9 @@
 {
 	"email": "mail@mail.com",
 	"password": "qwerty"
+},
+{
+	"email": "admin@mail.com",
+	"password": "admin"
 }
 ```
