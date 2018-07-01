@@ -7,10 +7,10 @@ const passport = require('passport');
 const passportConf = require('../../passport');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
-router.get('/', checkAuth, UsersController.users_get_user);
+router.get('/', passportJWT, UsersController.users_get_user);
 router.post('/signup', UsersController.users_user_signup);
 router.post('/login', UsersController.users_user_login);
-router.delete('/:userId', checkAuth, UsersController.users_user_delete)
+router.delete('/:userId', passportJWT, UsersController.users_user_delete)
 
 router.get('/protected', passportJWT, (req, res) => {
   res.send('I\'m protected!');

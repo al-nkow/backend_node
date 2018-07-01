@@ -4,6 +4,7 @@ const JwtStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const User = require('./api/models/user');
 
+// JSON WEB TOKENS STRATEGY
 passport.use(new JwtStrategy({
   // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
   jwtFromRequest: ExtractJWT.fromHeader('authorization'),
@@ -20,3 +21,5 @@ passport.use(new JwtStrategy({
     done(error, false);
   }
 }));
+
+// LOCAL STRATEGY
