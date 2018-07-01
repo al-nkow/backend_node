@@ -11,8 +11,39 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/user');
 
+
+
+// ============= AUTH =============
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const JwtStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
+const opts = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.SECRET_OR_KEY
+};
+const strategy = new JwtStrategy(opts, (payload, next) => {
+  // TODO: get user from DB
+  const user = null;
+  next(null, user);
+});
+passport.use(strategy);
+app.use(passport.initialize());
+// ============= AUTH =============
+
+
+// mongoose.Promise = Promise;
+mongoose.set('debug', true); // if - !prod
+
 mongoose.connect('mongodb://localhost:27017/myapi', {
     // useMongoClient: true
+}).catch(err => {
+  if (err.message.indexOf("ECONNREFUSED") !== -1) {
+    console.error("Error: The server was not able to reach MongoDB. Maybe it's not running?");
+    process.exit(1);
+  } else {
+    throw err;
+  }
 });
 
 // mongoose.Promise = global.Promise; // fix some error
@@ -34,16 +65,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    // Allow CORS
-    res.header('Access-Control-Allow-Origin', '*'); // * - allow from any url
-    // res.header('Access-Control-Allow-Origin', 'http://my-cool-page.com')
-    // res.header('Access-Control-Allow-Header', '*')
-    res.header('Access-Control-Allow-Header', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  // Allow CORS
+  res.header('Access-Control-Allow-Origin', '*'); // * - allow from any url
+  // res.header('Access-Control-Allow-Origin', 'http://my-cool-page.com')
+  // res.header('Access-Control-Allow-Header', '*')
+  res.header('Access-Control-Allow-Header', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        return res.status(200).json({});
-    }
-    next();
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+      return res.status(200).json({});
+  }
+  next();
 });
 
 // Routes
@@ -69,19 +100,19 @@ app.get('/page', function (req, res) {
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-    const error = new Error('Not found');
-    error.status = 404;
-    next(error);
+  const error = new Error('Not found');
+  error.status = 404;
+  next(error);
 });
 
 // error handler middleware
 app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
-    })
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message
+    }
+  })
 });
 
 // error handler
