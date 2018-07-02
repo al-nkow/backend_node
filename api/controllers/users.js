@@ -43,70 +43,69 @@ exports.users_user_signup = async (req, res, next) => {
 };
 
 // SIGN IN USER
-// exports.users_user_login = async (req, res, next) => {
-//   const { email, password } = req.body;
-//
-//   const foundUser = await User.findOne({ email: email });
-//   console.log('>>>>>>>', foundUser);
-//   if (!foundUser) return res.status(401).json({ message: 'Auth failed' });
-//
-//   const isMatch = await User.isValidPassword(password);
-//
-//   if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
-//
-//   const token = jwt.sign({
-//     email: email,
-//     userId: foundUser._id
-//   }, process.env.SECRET_OR_KEY, { expiresIn: '1h' });
-//
-//   return res.status(200).json({
-//     message: 'Auth successful',
-//     token: token
-//   });
-// };
+exports.users_user_login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const foundUser = await User.findOne({ email: email });
+  if (!foundUser) return res.status(401).json({ message: 'Auth failed' });
+
+  const isMatch = await User.isValidPassword(password);
+
+  if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
+
+  const token = jwt.sign({
+    email: email,
+    userId: foundUser._id
+  }, process.env.SECRET_OR_KEY, { expiresIn: '1h' });
+
+  return res.status(200).json({
+    message: 'Auth successful',
+    token: token
+  });
+};
 
 // SIGN IN USER
-exports.users_user_login = (req, res, next) => {
-  User.find({ email: req.body.email }) // also we can use .findOne()
-    .exec()
-    .then(userArr => {
-      if (userArr.length < 1) {
-        return res.status(401).json({
-          message: 'Auth failed'
-        });
-      }
-      bcrypt.compare(req.body.password, userArr[0].password, (err, result) => {
-        if (err) {
-          return res.status(401).json({
-            message: 'Auth failed'
-          });
-        }
-        if (result) {
-          const token = jwt.sign({ // add token
-              email: userArr[0].email,
-              userId: userArr[0]._id
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: "1h"
-            });
-          return res.status(200).json({
-            message: 'Auth successful',
-            token: token
-          });
-        }
-        return res.status(401).json({
-          message: 'Auth failed'
-        });
-      });
-    })
-    .catch(err => {
-      console.log('LOGIN ERROR: ', err);
-      res.status(500).json({
-        error: err
-      });
-    });
-};
+// exports.users_user_login = (req, res, next) => {
+//   User.find({ email: req.body.email }) // also we can use .findOne()
+//     .exec()
+//     .then(userArr => {
+//       if (userArr.length < 1) {
+//         return res.status(401).json({
+//           message: 'Auth failed'
+//         });
+//       }
+//       bcrypt.compare(req.body.password, userArr[0].password, (err, result) => {
+//         if (err) {
+//           return res.status(401).json({
+//             message: 'Auth failed'
+//           });
+//         }
+//         if (result) {
+//           const token = jwt.sign({ // add token
+//               email: userArr[0].email,
+//               userId: userArr[0]._id
+//             },
+//             process.env.JWT_KEY,
+//             {
+//               expiresIn: "1h"
+//             });
+//           return res.status(200).json({
+//             message: 'Auth successful',
+//             token: token
+//           });
+//         }
+//         return res.status(401).json({
+//           message: 'Auth failed'
+//         });
+//       });
+//     })
+//     .catch(err => {
+//       console.log('LOGIN ERROR: ', err);
+//       res.status(500).json({
+//         error: err
+//       });
+//     });
+// };
 
 // DELETE USERS
 exports.users_user_delete = (req, res, next) => {

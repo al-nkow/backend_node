@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = mongoose.Schema({
+let userSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   email: {
     type: String,
@@ -33,3 +33,6 @@ userSchema.methods.isValidPassword = async function(enteredPassword) {
 };
 
 module.exports = mongoose.model('User', userSchema);
+
+// let User = mongoose.model('User', UserSchema);
+// export default User;
