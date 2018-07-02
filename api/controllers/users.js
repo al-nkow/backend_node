@@ -19,46 +19,40 @@ exports.users_get_user = (req, res, next) => {
     });
 };
 
-exports.users_user_signup = (req, res, next) => {
 
-  User.find({ email: req.body.email })
-    .exec()
-    .then(user => {
-      if (user.length >= 1) {
-        return res.status(409).json({
-          message: 'Email already exists'
-        });
-      } else {
-        // bcrypt.hash(data, salt, cb)
-        bcrypt.hash(req.body.password, 10, (err, hash) => { // 10 - generate salt
-          if (err) {
-            return res.status(500).json({
-              error: err
-            });
-          } else {
-            const user = new User({
-              _id: new mongoose.Types.ObjectId(),
-              email: req.body.email,
-              password: hash // hash - is encrypted password
-            });
-            user
-              .save()
-              .then(result => {
-                console.log('USER >>>>', result);
-                res.status(201).json({
-                  message: 'User created'
-                });
-              })
-              .catch(err => {
-                res.status(500).json({
-                  error: err
-                });
-              });
-          }
-        });
-      }
+
+
+
+
+exports.users_user_signup = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  const foundUser = await User.findOne({ email: email });
+  if (foundUser) return res.status(409).json({ message: 'Email is already in use' });
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      _id: new mongoose.Types.ObjectId(),
+      email: email,
+      password: hash
     });
+
+    await newUser.save();
+    res.status(201).json({ message: 'User created' });
+  } catch(err) {
+    return res.status(500).json({ error: err });
+  }
 };
+
+
+
+
+
+
+
 
 exports.users_user_login = (req, res, next) => {
   User.find({ email: req.body.email }) // also we can use .findOne()
