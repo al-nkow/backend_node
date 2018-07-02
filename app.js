@@ -11,32 +11,6 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/user');
 
-
-
-// ============= AUTH =============
-// const passport = require('passport');
-// const passportJWT = require('passport-jwt');
-// const JwtStrategy = passportJWT.Strategy;
-// const ExtractJWT = passportJWT.ExtractJwt;
-// const opts = {
-//   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-//   secretOrKey: process.env.SECRET_OR_KEY
-// };
-// const strategy = new JwtStrategy(opts, (payload, next) => {
-//   // TODO: get user from DB
-//   console.log('=======================');
-//   console.log('=======================');
-//   console.log(payload);
-//   console.log('=======================');
-//   console.log('=======================');
-//   const user = null;
-//   next(null, user);
-// });
-// passport.use(strategy);
-// app.use(passport.initialize());
-// ============= AUTH =============
-
-
 // mongoose.Promise = Promise;
 mongoose.set('debug', true); // if - !prod
 
@@ -53,13 +27,8 @@ mongoose.connect('mongodb://localhost:27017/myapi', {
 
 // mongoose.Promise = global.Promise; // fix some error
 
-
-
-
 app.set('views', './views');
 app.set('view engine', 'pug');
-
-
 
 app.use(morgan('dev'));
 // publicly available routes
@@ -86,55 +55,6 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/user', userRoutes);
-
-
-
-
-
-
-
-
-
-
-
-
-// const User = require('./api/models/user');
-// app.get('/getToken',  (req, res) => {
-//   if (!req.query.email || !req.query.password) {
-//     return res.status(401).send('Fields not sent');
-//   }
-//   User.find({ email: req.query.email })
-//     .exec()
-//     .then(userArr => {
-//       if (userArr.length < 1) return res.status(401).json({message: 'Auth failed'});
-//       console.log('[GET TOKEN RESULT]: >>>>', userArr[0]);
-//       // res.authenticate(req.body.password).then(user => {
-//       //   console.log('>>>>>>-------->>>>>>', user);
-//       // });
-//       res.send('OK!');
-//     }).catch((err) => { console.log('ERROR: ', err); })
-// });
-// app.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
-//   res.send('I\'m protected!');
-// });
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // INDEX.html =========
 app.get('/about',function(req,res){

@@ -21,5 +21,3 @@ passport.use(new JwtStrategy({
     done(error, false);
   }
 }));
-
-// LOCAL STRATEGY

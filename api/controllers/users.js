@@ -19,11 +19,7 @@ exports.users_get_user = (req, res, next) => {
     });
 };
 
-
-
-
-
-
+// SIGN UP USER
 exports.users_user_signup = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -31,8 +27,7 @@ exports.users_user_signup = async (req, res, next) => {
   if (foundUser) return res.status(409).json({ message: 'Email is already in use' });
 
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, 10);
 
     const newUser = new User({
       _id: new mongoose.Types.ObjectId(),
@@ -47,13 +42,30 @@ exports.users_user_signup = async (req, res, next) => {
   }
 };
 
+// SIGN IN USER
+// exports.users_user_login = async (req, res, next) => {
+//   const { email, password } = req.body;
+//
+//   const foundUser = await User.findOne({ email: email });
+//   console.log('>>>>>>>', foundUser);
+//   if (!foundUser) return res.status(401).json({ message: 'Auth failed' });
+//
+//   const isMatch = await User.isValidPassword(password);
+//
+//   if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
+//
+//   const token = jwt.sign({
+//     email: email,
+//     userId: foundUser._id
+//   }, process.env.SECRET_OR_KEY, { expiresIn: '1h' });
+//
+//   return res.status(200).json({
+//     message: 'Auth successful',
+//     token: token
+//   });
+// };
 
-
-
-
-
-
-
+// SIGN IN USER
 exports.users_user_login = (req, res, next) => {
   User.find({ email: req.body.email }) // also we can use .findOne()
     .exec()
@@ -96,6 +108,7 @@ exports.users_user_login = (req, res, next) => {
     });
 };
 
+// DELETE USERS
 exports.users_user_delete = (req, res, next) => {
   User.remove({_id: req.params.userId})
     .exec()
