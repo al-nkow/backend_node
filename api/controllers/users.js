@@ -3,20 +3,14 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
-exports.users_get_user = (req, res, next) => {
-  User.find()
-  // .select('product quantity _id')
-    .exec()
-    .then(docs => {
-      res.status(200).json({
-        users: docs
-      });
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      });
-    });
+// GET USERS LIST
+exports.users_get_user = async (req, res) => {
+  try {
+    const users = await User.find(); // .select('product quantity _id')
+    res.status(200).json({ users: users });
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 };
 
 // SIGN UP USER
@@ -43,82 +37,33 @@ exports.users_user_signup = async (req, res, next) => {
 };
 
 // SIGN IN USER
-// exports.users_user_login = async (req, res, next) => {
-//   const { email, password } = req.body;
-//
-//   const foundUser = await User.findOne({ email: email });
-//   if (!foundUser) return res.status(401).json({ message: 'Auth failed' });
-//
-//   const isMatch = await User.isValidPassword(password);
-//
-//   if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
-//
-//   const token = jwt.sign({
-//     email: email,
-//     userId: foundUser._id
-//   }, process.env.SECRET_OR_KEY, { expiresIn: '1h' });
-//
-//   return res.status(200).json({
-//     message: 'Auth successful',
-//     token: token
-//   });
-// };
+exports.users_user_login = async (req, res, next) => {
+  const { email, password } = req.body;
 
-// SIGN IN USER
-exports.users_user_login = (req, res, next) => {
-  User.find({ email: req.body.email }) // also we can use .findOne()
-    .exec()
-    .then(userArr => {
-      if (userArr.length < 1) {
-        return res.status(401).json({
-          message: 'Auth failed'
-        });
-      }
-      bcrypt.compare(req.body.password, userArr[0].password, (err, result) => {
-        if (err) {
-          return res.status(401).json({
-            message: 'Auth failed'
-          });
-        }
-        if (result) {
-          const token = jwt.sign({ // add token
-              email: userArr[0].email,
-              userId: userArr[0]._id
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: "1h"
-            });
-          return res.status(200).json({
-            message: 'Auth successful',
-            token: token
-          });
-        }
-        return res.status(401).json({
-          message: 'Auth failed'
-        });
-      });
-    })
-    .catch(err => {
-      console.log('LOGIN ERROR: ', err);
-      res.status(500).json({
-        error: err
-      });
-    });
+  const foundUser = await User.findOne({ email: email });
+  if (!foundUser) return res.status(401).json({ message: 'Auth failed' });
+
+  const isMatch = await foundUser.isValidPassword(password); // isValidPassword - custom method
+
+  if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
+
+  const token = jwt.sign({
+    email: email,
+    userId: foundUser._id
+  }, process.env.SECRET_OR_KEY, { expiresIn: '1h' });
+
+  return res.status(200).json({
+    message: 'Auth successful',
+    token: token
+  });
 };
 
 // DELETE USERS
-exports.users_user_delete = (req, res, next) => {
-  User.remove({_id: req.params.userId})
-    .exec()
-    .then(result => {
-      res.status(200).json({
-        message: 'User deleted'
-      });
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      });
-    });
+exports.users_user_delete = async (req, res) => {
+  try {
+    await User.remove({ _id: req.body.userId });
+    return res.status(200).json({ message: 'User deleted' });
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 };

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const Schema = mongoose.Schema;
 
-let userSchema = mongoose.Schema({
+let userSchema = new Schema({
   _id: mongoose.Schema.Types.ObjectId,
   email: {
     type: String,
@@ -23,10 +24,10 @@ let userSchema = mongoose.Schema({
 //   }
 // });
 
-// sign in - check password
+// add custom method - check password
 userSchema.methods.isValidPassword = async function(enteredPassword) {
   try {
-    return await bcrypt.compare(enteredPassword, this.local.password);
+    return await bcrypt.compare(enteredPassword, this.password);
   } catch(error) {
     throw new Error(error);
   }

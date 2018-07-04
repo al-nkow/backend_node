@@ -6,8 +6,8 @@ const User = require('./api/models/user');
 
 // JSON WEB TOKENS STRATEGY
 passport.use(new JwtStrategy({
-  // jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-  jwtFromRequest: ExtractJWT.fromHeader('authorization'),
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  // jwtFromRequest: ExtractJWT.fromHeader('authorization'), // no Bearer
   secretOrKey: process.env.SECRET_OR_KEY
 }, async (payload, done) => {
   try {
