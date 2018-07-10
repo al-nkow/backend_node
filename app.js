@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/user');
+const contentRoutes = require('./api/routes/content');
 
 // mongoose.Promise = Promise;
 mongoose.set('debug', true); // if - !prod
@@ -55,6 +56,7 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/user', userRoutes);
+app.use('/content', contentRoutes);
 
 // INDEX.html =========
 app.get('/about',function(req,res){
@@ -63,7 +65,7 @@ app.get('/about',function(req,res){
 app.get('/admin',function(req,res){
   res.sendFile(path.join(__dirname+'/public/admin/admin.html'));
 });
-// PUG TEMPLATES
+// PUG TEMPLATES ======
 app.get('/page', function (req, res) {
   res.render('page', { title: 'Hey', message: 'Hello there!'});
 });
