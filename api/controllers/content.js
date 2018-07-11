@@ -4,8 +4,8 @@ const Content = require('../models/content');
 // GET CONTENT
 exports.content_get = async (req, res) => {
   try {
-    const content = await Content.find();
-    res.status(200).json({ content });
+    const content = await Content.findOne({ key: 'main_content' }).select('main about');
+    res.status(200).json(content);
   } catch (err) {
     return res.status(500).json({ error: err });
   }
@@ -24,7 +24,7 @@ exports.content_create = async (req, res) => {
       const newContent = new Content({
         ...req.body,
         _id: new mongoose.Types.ObjectId(),
-        name: 'information',
+        key: 'main_content',
       });
       await newContent.save();
       res.status(201).json({ message: 'Content created' });
